@@ -30,8 +30,8 @@ trellis.par.set(canonical.theme(color = FALSE))
 sampleRows <- sample(1:nrow(verlander), 20)
 verlander[sampleRows,]
 
-#####################################
-# histogram and density plt of speed
+######################################
+# histogram and density plot of speed
 histogram(~ speed, data = verlander)
 densityplot(~ speed, data = verlander, plot.points = FALSE)
 #...conditional to pitch type
@@ -62,45 +62,48 @@ xyplot(speed ~ gameDay | factor(season),
 
 
 
-#############################
-# Verlander's pitch selection
+###################################################
+# Verlander's fastball/change-up speed differential
 
-# table of pitch type by season
-tbl <- table(verlander$pitch_type, verlander$season)
-# proportions
-prop <- round(prop.table(tbl, margin = 2), 2)
-prop
-# labels for pitch types
-pitchnames <- c("change-up", "curveball", "4S-fastball"
-                , "2S-fastball", "slider")
+# subset Four-seamers and change-ups
+speedFC <- subset(verlander, pitch_type %in% c("FF", "CH"))
+# average speed by season and pitch type
+avgspeedFC <- aggregate(speed ~ pitch_type + season, 
+                        data = speedFC, FUN = mean)
+#...remove unused factor levels
+avgspeedFC <- droplevels(avgspeedFC)
+avgspeedFC
+
 # dotplot
-dotplot(prop,
-        xlab = "Proportion",
-        ylab = "Pitch type",
-        scales = list(y = list(labels = pitchnames)),
-        auto.key = list(space="right")
-)
+dotplot(factor(season) ~ speed, groups = pitch_type,
+        data = avgspeedFC,
+        pch = c("C", "F"), cex = 2)
 
 #########################################
 # panel function: speed trend in the game
 
-# smooth line: speed by pitches thrown
-smoothLine <- with(F4verl, lowess(pitches, speed))
+# average fastball speed by pitch count and season
+avgSpeed <- aggregate(speed ~ pitches + season, data = F4verl, 
+                      FUN = mean)
+#...overall average
+avgSpeedComb <- mean(F4verl$speed)
 
-# scatterplot of data sample
-xyplot(speed ~ pitches,
-       data = F4verl[sample(1:nrow(F4verl), 1000),],
-       scales = list(x = list(at=seq(0,140,10))))
+# scatterplot of data (not annotated)
+xyplot(speed ~ pitches | factor(season),
+       data = avgSpeed)
 
-# add the smooth line (and a ref line at 100 pitches thrown)
-xyplot(speed ~ pitches,
-       data = F4verl[sample(1:nrow(F4verl), 1000),],
-       scales = list(x = list(at=seq(0,140,10))),
-       panel = function(...){
+# add the refenece lines (and text + arrows)
+xyplot(speed ~ pitches | factor(season)
+       , data = avgSpeed
+       , panel = function(...){
          panel.xyplot(...)
-         panel.abline(v=100)
-         panel.lines(smoothLine, lwd=2)
-       })
+         panel.abline(v = 100, lty = "dotted")
+         panel.abline(h = avgSpeedComb)
+         panel.text(25, 100, "avg. speed")
+         panel.arrows(25, 99.5, 0, avgSpeedComb
+                      , length = .1)
+       }
+)
 
 
 #####################################
@@ -124,7 +127,9 @@ xyplot(pz ~ px | batter_hand, data=NoHit, groups=pitch_type,
        ylim = c(0, 5),
        xlab = "Horizontal Location\n(ft. from middle of plate)",
        ylab = "Vertical Location\n(ft. from ground)")
-# prepare a custom legend
+# prepare a custom legend (first a vector with pitch names)
+pitchnames <- c("change-up", "curveball", "4S-fastball"
+                , "2S-fastball", "slider")
 myKey <- list(space = "right",
               border = TRUE,
               cex.title = .8,
@@ -147,9 +152,8 @@ xyplot(pz ~ px | batter_hand, data=NoHit, groups=pitch_type,
        ylab = "vertical location\n(ft. from ground)",
        panel = function(...){
          panel.xyplot(...)
-         panel.lines(c(inKzone, inKzone, outKzone, outKzone, inKzone),
-                     c(botKzone, topKzone, topKzone, botKzone, botKzone),
-                     col = "black", lty = 3)
+         panel.rect(inKzone, botKzone, outKzone, topKzone,
+                    border = "black", lty = 3)
        }
 )
 
@@ -216,9 +220,11 @@ p4 +
 ##############################
 # smooth line with error bands
 
-ggplot(F4verl, aes(pitches, speed)) + 
-  geom_point(aes(pitches, speed), 
-             data = F4verl[sample(1:nrow(F4verl), 1000),]) + 
+ggplot(F4verl, aes(pitches, speed)) +
+  facet_wrap(~ season) +
+  geom_line(stat = "hline", yintercept = "mean", lty = 3) +
+  geom_point(aes(pitches, speed),
+             data = F4verl[sample(1:nrow(F4verl), 1000),]) +
                geom_smooth(col = "black") +
                geom_vline(aes(xintercept = 100), col = "black", lty = 2)
 
@@ -241,7 +247,7 @@ ggplot(F4verl, aes(px, pz)) +
   stat_binhex() +
   facet_wrap(~ batter_hand) + 
   coord_equal() +
-  geom_path(aes(x, y), data = kZone, lwd = 2, col = "white")
+  geom_path(aes(x, y), data = kZone, lwd = 2, col = "white", alpha = .3)
 
 ###########################
 # adding a background image
@@ -249,7 +255,7 @@ ggplot(F4verl, aes(px, pz)) +
 # load jpeg package
 library(jpeg)
 # load the Comerica Park diagram
-diamond <- readJPEG("Comerica.jpg")
+diamond <- readJPEG("data/Comerica.jpg")
 # spray chart overlaid on jpeg image
 ggplot(cabrera, aes(hitx, hity)) + 
   coord_equal() + 
