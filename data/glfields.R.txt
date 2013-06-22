@@ -1,0 +1,93 @@
+names(d) = c("date", "ngame", "day",
+             "visitingteam", "visitingleague", "visitinggame",
+             "hometeam", "homeleague", "homegame",
+             "visitingscore", "homescore",
+             "lengthgame", "daynight", "completioninfo",
+             "forfeitinfo", "protestinfo",
+             "parkid", "attendance", "timegame",
+             "visitinglinescore", "homelinescore",
+             "visitingab", "visitingh", "visiting2b", 
+             "visiting3b", "visitinghr", "visitingrbi",
+             "visitingsh", "visitingsf", "visitinghbp",
+             "visitingbb", "visitingibb", "visitingk",
+             "visitingsb", "visitingcs", "visitinggdp",
+             "visitingci", "visitinglob")
+
+             
+ 
+22-38     Visiting team offensive statistics (unquoted) (in order):
+         
+             sacrifice hits.  This may include sacrifice flies for years
+                prior to 1954 when sacrifice flies were allowed.
+             sacrifice flies (since 1954)
+             hit-by-pitch
+             walks
+             intentional walks
+             strikeouts
+             stolen bases
+             caught stealing
+             grounded into double plays
+             awarded first on catcher's interference
+             left on base
+39-43     Visiting team pitching statistics (unquoted)(in order):
+             pitchers used ( 1 means it was a complete game )
+             individual earned runs
+             team earned runs
+             wild pitches
+             balks
+44-49     Visiting team defensive statistics (unquoted) (in order):
+             putouts.  Note: prior to 1931, this may not equal 3 times
+                the number of innings pitched.  Prior to that, no
+                putout was awarded when a runner was declared out for
+                being hit by a batted ball.
+             assists
+             errors
+             passed balls
+             double plays
+             triple plays
+50-66     Home team offensive statistics
+67-71     Home team pitching statistics
+72-77     Home team defensive statistics
+78-79     Home plate umpire ID and name
+80-81     1B umpire ID and name
+82-83     2B umpire ID and name
+84-85     3B umpire ID and name
+86-87     LF umpire ID and name
+88-89     RF umpire ID and name
+          If any umpire positions were not filled for a particular game
+          the fields will be "","(none)".
+90-91     Visiting team manager ID and name
+92-93     Home team manager ID and name
+94-95     Winning pitcher ID and name
+96-97     Losing pitcher ID and name
+98-99     Saving pitcher ID and name--"","(none)" if none awarded
+100-101   Game Winning RBI batter ID and name--"","(none)" if none
+          awarded
+102-103   Visiting starting pitcher ID and name
+104-105   Home starting pitcher ID and name
+106-132   Visiting starting players ID, name and defensive position,
+          listed in the order (1-9) they appeared in the batting order.
+133-159   Home starting players ID, name and defensive position
+          listed in the order (1-9) they appeared in the batting order.
+  160     Additional information.  This is a grab-bag of informational
+          items that might not warrant a field on their own.  The field 
+          is alpha-numeric. Some items are represented by tokens such as:
+             "HTBF" -- home team batted first.
+             Note: if "HTBF" is specified it would be possible to see
+             something like "01002000x" in the visitor's line score.
+          Changes in umpire positions during a game will also appear in 
+          this field.  These will be in the form:
+             umpchange,inning,umpPosition,umpid with the latter three
+             repeated for each umpire.
+          These changes occur with umpire injuries, late arrival of 
+          umpires or changes from completion of suspended games. Details
+          of suspended games are in field 14.
+  161     Acquisition information:
+             "Y" -- we have the complete game
+             "N" -- we don't have any portion of the game
+             "D" -- the game was derived from box score and game story
+             "P" -- we have some portion of the game.  We may be missing
+                    innings at the beginning, middle and end of the game.
+ 
+Missing fields will be NULL.
+
