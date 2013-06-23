@@ -1,17 +1,18 @@
 ##############################################
 # Chapter 3 Traditional Graphics
 #
-# Needs datafiles hofbatting.csv, Master.csv, 
-#                 Batting.csv, all1998.csv,
+# Needs datafiles hofbatting.csv, all1998.csv,
 #                 fields.csv, retrosheetIDs.csv
+#   plus .csv files from the Lahman's database
+#         (placed in the "lahman" subfolder)
 # 
 ##############################################
 
 # Section 3.1 Introduction
 
-hof = read.csv("hofbatting.csv")
+hof <- read.csv("hofbatting.csv")
 
-hof$MidCareer = with(hof, (From + To) / 2)
+hof$MidCareer <- with(hof, (From + To) / 2)
 
 hof$Era <- cut(hof$MidCareer,
         breaks = c(1800, 1900, 1919, 1941, 1960, 1976, 1993, 2050),
@@ -31,12 +32,12 @@ pie(table(hof$Era))
 
 # Section 3.3 Saving Graphs
 
-png("bargraph.png")
+png("../output/bargraph.png")
 barplot(table(hof$Era), xlab="Era", ylab="Frequency",
         main="Era of the Nonpitching Hall of Famers")
 dev.off()
 
-pdf("graphs.pdf")
+pdf("../output/graphs.pdf")
 barplot(table(hof$Era))
 plot(table(hof$Era))
 dev.off()
@@ -55,6 +56,7 @@ dotchart(hof.500$OPS, labels=hof.500$X, xlab="OPS")
 windows(width=7, height=3.5)
 stripchart(hof$MidCareer, method="jitter", pch=1, 
            xlab="Mid Career")
+dev.off()
 
 hist(hof$MidCareer, xlab="Mid Career", main="")
 
@@ -66,6 +68,8 @@ hist(hof$MidCareer, xlab="Mid Career", main="",
 with(hof, plot(MidCareer, OPS))
 with(hof, lines(lowess(MidCareer, OPS, f=0.3)))
 with(hof, identify(MidCareer, OPS, X, n=4))
+  #... identify points on the plot by mouse-clicking 
+  #... then press ESC
 
 with(hof, plot(OBP, SLG))
 
@@ -85,6 +89,9 @@ text(.27, .62, "OPS = 0.9")
 text(.27, .72, "OPS = 1.0")
 
 with(hof, identify(OBP, SLG, X, n=6))
+  #... identify points on the plot by mouse-clicking 
+  #... then press ESC
+
 
 # Section 3.7 A Numeric Variable and a Factor Variable
 
@@ -102,7 +109,7 @@ boxplot(HR.Rate ~ Era, data=hof, las=2,
 
 # Section 3.8 Comparing Ruth, Aaron, Bonds, and A-Rod
 
-master <- read.csv("Master.csv")
+master <- read.csv("lahman/Master.csv")
 
 getinfo <- function(firstname, lastname){
   playerline <- subset(master,
@@ -120,7 +127,7 @@ bonds.info <- getinfo("Barry", "Bonds")
 arod.info <- getinfo("Alex", "Rodriguez")
 ruth.info
 
-batting <- read.csv("Batting.csv")
+batting <- read.csv("lahman/Batting.csv")
 
 ruth.data <- subset(batting, playerID == ruth.info$name.code)
 ruth.data$Age <- ruth.data$yearID - ruth.info$byear

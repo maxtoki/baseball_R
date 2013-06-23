@@ -4,22 +4,24 @@
 # use data files spahn.csv, NLbatting.csv,
 #                NLpitching.csv, munson.csv
 #                Batting.csv
+#
+# needed packages: plyr
 ###############################################
 
 ##############################################
 # Section 2.3 Vectors
 ##############################################
 
-W = c(8, 21, 15, 21, 21, 22, 14)
-L = c(5, 10, 12, 14, 17, 14, 19)
+W <- c(8, 21, 15, 21, 21, 22, 14)
+L <- c(5, 10, 12, 14, 17, 14, 19)
 
-Win.Pct = 100 * W / (W + L)
+Win.Pct <- 100 * W / (W + L)
 Win.Pct
 
-Year = seq(1946, 1952)
-Year = 1946 : 1952
+Year <- seq(1946, 1952)
+Year <- 1946 : 1952
 
-Age= Year - 1921
+Age <- Year - 1921
 plot(Age, Win.Pct)
 
 mean(Win.Pct)
@@ -122,7 +124,7 @@ plot(hr.rates(Age, HR, AB))
 
 getwd()
 
-spahn = read.csv("spahn.csv")
+spahn <- read.csv("spahn.csv")
 
 HR <- c(13, 23, 21, 27, 37, 52, 34, 42, 31, 40, 54)
 AB <- c(341, 549, 461, 543, 517, 533, 474, 519, 541, 527, 514)
@@ -130,7 +132,7 @@ Age <- 19 : 29
 HR.Rates <- hr.rates(Age, HR, AB)
 Mantle <- cbind(Age, HR, AB, Rates=HR.Rates$y)
 
-write.csv(Mantle, "mantle.csv", row.names=FALSE)
+write.csv(Mantle, "..\output\mantle.csv", row.names=FALSE)
 
 # Section 2.7 Data Frames
 
@@ -146,25 +148,25 @@ spahn$Age[spahn$ERA == min(spahn$ERA)]
 
 #####################################
 
-spahn$FIP = with(spahn, (13 * HR + 3 * BB - 2 * SO) / IP)
+spahn$FIP <- with(spahn, (13 * HR + 3 * BB - 2 * SO) / IP)
 
-pos = order(spahn$FIP)
+pos <- order(spahn$FIP)
 head(spahn[pos, c("Year", "Age", "W", "L", "ERA", "FIP")])
 
-spahn1 = subset(spahn, Tm == "BSN" | Tm == "MLN")
+spahn1 <- subset(spahn, Tm == "BSN" | Tm == "MLN")
 
-spahn1$Tm = factor(spahn1$Tm, levels=c("BSN", "MLN"))
+spahn1$Tm <- factor(spahn1$Tm, levels=c("BSN", "MLN"))
 
 by(spahn1[, c("W.L", "ERA", "WHIP", "FIP")], spahn1$Tm, summary)
 
 # this command assumes that you already have two data frames
 # NLbatting and ALbatting into R
 
+NLbatting <- read.csv("NLbatting.csv")
+ALbatting <- read.csv("ALbatting.csv")
 batting <- rbind(NLbatting, ALbatting)
 
-NLbatting <- read.csv("NLbatting.csv")
 NLpitching <- read.csv("NLpitching.csv")
-
 NL <- merge(NLbatting, NLpitching, by="Tm")
 
 NL.150 <- subset(NLbatting, HR > 150)

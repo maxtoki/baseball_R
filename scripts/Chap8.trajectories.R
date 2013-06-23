@@ -1,14 +1,15 @@
 ####################################################
 # Chapter 8 - Career Trajectories
 #
-# uses data files Batting.csv, Master.csv, Fielding.csv
+# uses .csv files from the Lahman's database
+#         (placed in the "lahman" subfolder)
 # uses R packages car, plyr, ggplot2
 ####################################################
 
 # Section 8.2 Mickey Mantle's Career Trajectory
 
-Batting <- read.csv("Batting.csv")
-Master <- read.csv("Master.csv")
+Batting <- read.csv("lahman/Batting.csv")
+Master <- read.csv("lahman/Master.csv")
 
 mantle.info <- subset(Master, nameFirst=="Mickey" & nameLast=="Mantle")
 mantle.id <- as.character(mantle.info$playerID)
@@ -50,21 +51,21 @@ fit.model <- function(d){
        Age.max = Age.max, Max = Max)
 }
 
-F <- fit.model(Mantle)
-coef(F$fit)
-c(F$Age.max, F$Max)
+F2 <- fit.model(Mantle)
+coef(F2$fit)
+c(F2$Age.max, F2$Max)
 
-lines(Mantle$Age, predict(F$fit, Age=Mantle$Age), lwd=3)
-abline(v = F$Age.max, lwd=3, lty=2, col="grey")
-abline(h = F$Max, lwd=3, lty=2, col="grey")
+lines(Mantle$Age, predict(F2$fit, Age=Mantle$Age), lwd=3)
+abline(v = F2$Age.max, lwd=3, lty=2, col="grey")
+abline(h = F2$Max, lwd=3, lty=2, col="grey")
 text(29, .72, "Peak.age" , cex=2)
 text(20, 1, "Max", cex=2)
 
-summary(F$fit)
+summary(F2$fit)
 
 # Section 8.3 - Comparing Trajectories
 
-Fielding <- read.csv("Fielding.csv")
+Fielding <- read.csv("lahman/Fielding.csv")
 
 library(plyr)
 AB.totals <- ddply(Batting, .(playerID), 
@@ -78,8 +79,8 @@ find.position <- function(p){
   d <- subset(Fielding, playerID == p)
   count.games <- function(po)
     sum(subset(d, POS == po)$G)
-  F <- sapply(positions, count.games)
-  positions[F == max(F)][1]
+  FLD <- sapply(positions, count.games)
+  positions[FLD == max(FLD)][1]
 }
 
 PLAYER <- as.character(unique(Batting.2000$playerID))
@@ -110,8 +111,8 @@ C.totals$C.SLG <- with(C.totals,
           (C.H - C.2B - C.3B - C.HR + 2 * C.2B +
              3 * C.3B + 4 * C.HR) / C.AB)
 
-C.totals = merge(C.totals, Fielding.2000)
-C.totals$Value.POS = with(C.totals, 
+C.totals <- merge(C.totals, Fielding.2000)
+C.totals$Value.POS <- with(C.totals, 
                           ifelse(POS=="C", 240,
                           ifelse(POS=="SS", 168,
                           ifelse(POS=="2B", 132,
@@ -197,12 +198,12 @@ plot.traj2 <- function(first, last, n.similar = 5, ncol){
   player.list <- as.character(similar(player.id, n.similar)$playerID)
   Batting.new <- subset(Batting.2000, playerID %in% player.list)
   
-  F <- ddply(Batting.new, .(playerID), fit.traj)
-  F <- merge(F, 
+  F2 <- ddply(Batting.new, .(playerID), fit.traj)
+  F2 <- merge(F2, 
             data.frame(playerID = player.list,
             Name = sapply(as.character(player.list), get.name)))
 
-  print(ggplot(F, aes(Age, Fit)) + geom_line(size=1.5) +
+  print(ggplot(F2, aes(Age, Fit)) + geom_line(size=1.5) +
     facet_wrap(~ Name, ncol=ncol) + theme_bw())
   return(Batting.new)
 }
@@ -227,7 +228,7 @@ S
 with(S, plot(Age.max, Curve, pch=19, cex=1.5,
              xlab="Peak Age", ylab="Curvature",
              xlim=c(27, 36), ylim=c(-0.0035, 0)))
-S$lastNames = as.character(subset(Master, 
+S$lastNames <- as.character(subset(Master, 
                     playerID %in% S$playerID)$nameLast)
 with(S, text(Age.max, Curve, lastNames, pos=3))
 
@@ -251,46 +252,46 @@ Beta.coef$Peak.age <- with(Beta.coef, 30 - B / 2 / C)
 with(Beta.coef,
      plot(Midyear, Peak.age, ylim=c(20, 40),
           xlab = "Mid Career", ylab = "Peak Age"))
-I <- is.finite(Beta.coef$Peak.age)
+i <- is.finite(Beta.coef$Peak.age)
 with(Beta.coef,
-     lines(lowess(Midyear[I], Peak.age[I]), lwd=3))
+     lines(lowess(Midyear[i], Peak.age[i]), lwd=3))
 
 with(Beta.coef, 
-     plot(log2(Career.AB[I]), Peak.age[I], ylim=c(20, 40),
+     plot(log2(Career.AB[i]), Peak.age[i], ylim=c(20, 40),
           xlab = "log2 Career AB", ylab = "Peak Age"))
 with(Beta.coef,
-     lines(lowess(log2(Career.AB[I]), Peak.age[I]), lwd=3))
+     lines(lowess(log2(Career.AB[i]), Peak.age[i]), lwd=3))
 
 # Section 8.5 Trajectories and Fielding Position
 
-Batting.2000a = subset(Batting.2000, Midyear >= 1985 & Midyear <= 1995)
+Batting.2000a <- subset(Batting.2000, Midyear >= 1985 & Midyear <= 1995)
 
-fit.traj4 = function(d){
-  b = coef(lm(OPS ~ I(Age - 30) + I((Age - 30)^2), data = d))
+fit.traj4 <- function(d){
+  b <- coef(lm(OPS ~ I(Age - 30) + I((Age - 30)^2), data = d))
   data.frame(A = b[1], B = b[2], C = b[3],
              Peak.Age = 30 - b[2] / 2 / b[3],
              Midyear = d$Midyear[1], Career.AB = d$Career.AB[1],
              Position = d$POS[1])
 }
 
-Beta.estimates = ddply(Batting.2000a, .(playerID), fit.traj4)
+Beta.estimates <- ddply(Batting.2000a, .(playerID), fit.traj4)
 
-Beta.estimates1 = subset(Beta.estimates, Position %in% 
+Beta.estimates1 <- subset(Beta.estimates, Position %in% 
                  c("1B", "2B", "3B", "SS", "C", "OF"))
 
-Beta.estimates1$Position = Beta.estimates1$Position[ , drop=TRUE] 
+Beta.estimates1$Position <- Beta.estimates1$Position[ , drop=TRUE] 
 
-Beta.estimates1 = merge(Beta.estimates1, Master)
+Beta.estimates1 <- merge(Beta.estimates1, Master)
 
 stripchart(Peak.Age ~ Position, data=Beta.estimates1,
            xlim=c(20, 40), method="jitter", pch=1)
 
-special = with(Beta.estimates1, identify(Peak.Age, Position, 
+special <- with(Beta.estimates1, identify(Peak.Age, Position, 
                      n=5, labels=nameLast))
 
-dnew = subset(Batting.2000, 
+dnew <- subset(Batting.2000, 
               playerID %in% Beta.estimates1$playerID[special])
-dnew = merge(dnew, Master)
+dnew <- merge(dnew, Master)
 
 ggplot(dnew, aes(Age, OPS)) + geom_point(size=4) + 
   facet_wrap(~ nameLast, ncol=2) + ylim(0.4, 1.05) +

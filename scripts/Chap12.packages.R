@@ -1,9 +1,23 @@
+#####################################################################
 # Chapter 12 - Exploring Fielding metrics with Contributed R Packages
+#
+# use data files FanGraphs Leaderboard.csv, teamD.csv,
+#                 jeter_rollins.csv, 
+#
+#   plus .xls files from Wizardry's Appendix
+#         (placed in the "wizardry" subfolder)
+#
+# use R packages XLConnect, doBy, stringdist, plyr,
+#                 weights, ellipse, psych, reshape2,
+#                 ggplot2, directlabels
+# 
+#####################################################################
+
 
 # Section 12.2.3 Reading an Excel spreadsheet (package XLConnect)
 
 library(XLConnect)
-xlwzr <- loadWorkbook("Appendix_C_Shortstop.xls")
+xlwzr <- loadWorkbook("wizardry/Appendix_C_Shortstop.xls")
 wzr <- readWorksheet(xlwzr, sheet = 1, startRow = 7)
 wzr <- subset(wzr, Year == 2009)
 wzr$Name <- paste(wzr$First, wzr$Last)
@@ -39,6 +53,7 @@ index.min <- function(v) which(v == min(v))
 idx <- apply(dm, MARGIN = 1, FUN = index.min)
 names.mapped <- data.frame(fgName = fg.mismatches
                            , wzrName = wzr.mismatches[idx])
+names.mapped
 
 wzr <- merge(wzr, names.mapped, by.x = "Name", by.y = "wzrName"
              , all.x = TRUE)
@@ -71,8 +86,6 @@ plotcorr(Dcor)
 
 # 12.2.9 Evaluating the fielding metrics (psych)
 
-# NEED DATA FILE teamD.csv
-
 teamD <- read.csv("teamD.csv")
 Dcor <- wtd.cor(teamD[,c("DER", "UZR", "DRS", "TZL", "RZR"
                          , "FSR", "Runs")], weight=teamD$IP)
@@ -83,10 +96,9 @@ cor.plot(sortedCor, numbers = TRUE)
 
 # 12.3 Comparing Two Shortstops
 
-# NEED DATA FILE jeter_rollins.csv
-
 jetrol <- read.csv("jeter_rollins.csv")
 head(jetrol)
+names(jetrol)[1] <- "Season"
 
 # package reshape
 

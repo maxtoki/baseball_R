@@ -64,10 +64,10 @@ P.matrix <- rbind(P.matrix, c(rep(0, 24), 1))
 
 margin.table(P.matrix, 1)
 
-P1 = round(P.matrix["000 0", ], 3)
+P1 <- round(P.matrix["000 0", ], 3)
 data.frame(Prob = P1[P1 > 0])
 
-P2 = round(P.matrix["010 2", ], 3)
+P2 <- round(P.matrix["010 2", ], 3)
 data.frame(Prob = P2[P2 > 0])
 
 # 9.2.4 Simulating the Markov chain
@@ -124,7 +124,7 @@ Runs - Runs.Expectancy
 # 9.2.5 Beyond runs expectancy
 
 P.matrix.3 <- P.matrix %*% P.matrix %*% P.matrix
-sorted.P = sort(round(P.matrix.3["000 0", ], 3), decreasing=TRUE)
+sorted.P <- sort(round(P.matrix.3["000 0", ], 3), decreasing=TRUE)
 head(data.frame(Prob = sorted.P))
 
 # how many batters?
@@ -151,18 +151,18 @@ data2011C$BATTING.TEAM <- with(data2011C,
 Team.T <- with(data2011C, table(BATTING.TEAM, STATE, NEW.STATE))
 
 d.state <- subset(data2011C, STATE == '100 2')
-Team.T.S = with(d.state, table(BATTING.TEAM, NEW.STATE))
+Team.T.S <- with(d.state, table(BATTING.TEAM, NEW.STATE))
 
-WAS.Trans = Team.T.S["WAS", ]
-WAS.n = sum(WAS.Trans)
-P.WAS = WAS.Trans / WAS.n
+WAS.Trans <- Team.T.S["WAS", ]
+WAS.n <- sum(WAS.Trans)
+P.WAS <- WAS.Trans / WAS.n
 
-ALL.Trans = with(subset(data2011C, STATE=='100 2'), 
+ALL.Trans <- with(subset(data2011C, STATE=='100 2'), 
                  table(NEW.STATE))
-P.ALL = ALL.Trans / sum(ALL.Trans)
-K = 1274
+P.ALL <- ALL.Trans / sum(ALL.Trans)
+K <- 1274
 
-P.EST = WAS.n / (K + WAS.n) * P.WAS + K / (K + WAS.n) * P.ALL
+P.EST <- WAS.n / (K + WAS.n) * P.WAS + K / (K + WAS.n) * P.ALL
 
 data.frame(WAS = round(P.WAS, 4), 
            ALL = round(c(P.ALL), 4), 
@@ -177,7 +177,7 @@ data.frame(WAS = round(P.WAS, 4),
 
 # 9.3.6 Function to simulate one season
 
-source("one.simulation.68.R")
+source("../scripts/one.simulation.68.R")
 
 RESULTS <- one.simulation.68(0.20)
 RESULTS
@@ -200,25 +200,26 @@ Many.Results <- NULL
 for(j in 1:1000)
   Many.Results <- rbind(Many.Results, one.simulation.68(0.20))
 
-with(Many.Results, plot(Talent, Wins))
+with(Many.Results, smoothScatter(Talent, Wins))
 
 Results.avg <- subset(Many.Results, Talent > -0.05 & Talent < 0.05)
 hist(Results.avg$Wins)
 
-fit1 = glm(Winner.WS ~ Talent, data = Many.Results, family=binomial)
-fit2 = glm(Winner.Lg ~ Talent, data = Many.Results, family=binomial)
+fit1 <- glm(Winner.WS ~ Talent, data = Many.Results, family=binomial)
+fit2 <- glm(Winner.Lg ~ Talent, data = Many.Results, family=binomial)
 
-lp = predict(fit1, data.frame(Talent = seq(-0.4, 0.4, 0.1)))
+# removed from the book?
+lp <- predict(fit1, data.frame(Talent = seq(-0.4, 0.4, 0.1)))
+exp(lp) / (1 + exp(lp))
+# removed from the book?
+lp <- predict(fit2, data.frame(Talent = seq(-0.4, 0.4, 0.1)))
 exp(lp) / (1 + exp(lp))
 
-lp = predict(fit2, data.frame(Talent = seq(-0.4, 0.4, 0.1)))
-exp(lp) / (1 + exp(lp))
-
-b1 = coef(fit1)
+b1 <- coef(fit1)
 curve(exp(b1[1] + b1[2] * x) / (1 + exp(b1[1] + b1[2] * x)),
       -0.4, 0.4, xlab = "Talent", ylab = "Probability", lwd=2,
       ylim = c(0, 1))
-b2 = coef(fit2)
+b2 <- coef(fit2)
 curve(exp(b2[1] + b2[2] * x) / (1 + exp(b2[1] + b2[2] * x)),
       add = TRUE, lwd=2, lty=2)
 legend(-0.2, 0.8, legend=c("Win Pennant", "Win World Series"),

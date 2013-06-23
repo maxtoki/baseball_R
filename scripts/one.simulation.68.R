@@ -1,4 +1,4 @@
-one.simulation.68 = function(s.talent = 0.20){
+one.simulation.68 <- function(s.talent = 0.20){
 
   make.schedule <- function(teams, k){
     n.teams <- length(teams)
