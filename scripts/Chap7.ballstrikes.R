@@ -148,13 +148,13 @@ pred.area$fit00 <- c(predict(miggy00loess, pred.area))
 # obtain pred.area$fit02 and pred.area$fit20
 
 cabrera$bscount <- paste(cabrera$balls, cabrera$strikes, sep="-")
-miggy20 <- subset(cabrera, bscount == "0-0")
+miggy20 <- subset(cabrera, bscount == "2-0")
 miggy20loess <- loess(swung ~ px + pz, data=miggy20, control=
   loess.control(surface="direct"))
 pred.area$fit20 <- c(predict(miggy20loess, pred.area))
 
 cabrera$bscount <- paste(cabrera$balls, cabrera$strikes, sep="-")
-miggy02 <- subset(cabrera, bscount == "0-0")
+miggy02 <- subset(cabrera, bscount == "0-2")
 miggy02loess <- loess(swung ~ px + pz, data=miggy02, control=
   loess.control(surface="direct"))
 pred.area$fit02 <- c(predict(miggy02loess, pred.area))
@@ -174,6 +174,8 @@ contourplot(fit00 + fit02 + fit20 ~ px * pz, data=pred.area,
   }
 )
 
+# pitch selection
+
 table(verlander$pitch_type)
 
 round(100 * prop.table(table(verlander$pitch_type)))
@@ -188,6 +190,8 @@ verl_RHB <- subset(verlander, batter_hand == "R")
 verl_type_cnt_R <- table(verl_RHB$bscount, verl_RHB$pitch_type)
 round(100 * prop.table(verl_type_cnt_R, margin=1))
 
+# umpires
+
 umpiresRHB <- subset(umpires, batter_hand == "R")
 ump00 <- subset(umpiresRHB, balls == 0 & strikes == 0)
 ump00smp <- ump00[sample(1:nrow(ump00), 3000),]
@@ -198,7 +202,7 @@ ump00contour <- contourLines(x=seq(-2, 2, 0.1),
   y=seq(0, 6, 0.1),
   z=predict(ump00.loess, pred.area),
   levels=c(.5))
-ump00df <- as.data.frame(ump00contour)
+ump00df <- as.data.frame(ump00contour[[1]])
 ump00df$bscount <- "0-0"
 
 # by writing similar code, obtain data frames
@@ -211,7 +215,7 @@ ump02contour <- contourLines(x=seq(-2, 2, 0.1),
                              y=seq(0, 6, 0.1),
                              z=predict(ump02.loess, pred.area),
                              levels=c(.5))
-ump02df <- as.data.frame(ump02contour)
+ump02df <- as.data.frame(ump02contour[[1]])
 ump02df$bscount <- "0-2"
 
 ump30 <- subset(umpiresRHB, balls == 0 & strikes == 0)

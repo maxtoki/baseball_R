@@ -281,6 +281,7 @@ ggplot(F4verl, aes(px, pz)) +
   geom_path(aes(x, y), data = kZone, lwd = 2, col = "white")
 
 # hexagonal binning
+# (requires the package hexbin to be installed)
 
 ggplot(F4verl, aes(px, pz)) +
   stat_binhex() +
