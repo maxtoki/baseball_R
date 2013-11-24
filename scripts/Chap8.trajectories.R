@@ -84,7 +84,7 @@ find.position <- function(p){
 }
 
 PLAYER <- as.character(unique(Batting.2000$playerID))
-POSITIONS <- sapply(PLAYER, find.position)
+POSITIONS <- sapply(PLAYER, find.position) #takes long time to complete!
 Fielding.2000 <- data.frame(playerID = names(POSITIONS),
                            POS = POSITIONS)
 Batting.2000 <- merge(Batting.2000, Fielding.2000)
@@ -167,10 +167,10 @@ collapse.stint <- function(d){
 }
 
 Batting.2000 <- ddply(Batting.2000, 
-                     .(playerID, yearID), collapse.stint)
+                     .(playerID, yearID), collapse.stint) #requires a long time to complete
 
 player.list <- as.character(unique(Batting.2000$playerID))
-birthyears <- sapply(player.list, get.birthyear)
+birthyears <- sapply(player.list, get.birthyear) #requires a long time to complete
 Batting.2000 <- merge(Batting.2000,
                       data.frame(playerID=player.list,
                                  Birthyear=birthyears))
