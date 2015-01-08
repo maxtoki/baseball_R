@@ -1,0 +1,89 @@
+ERRATA LIST for ANALYZING BASEBALL DATA WITH R
+January 4, 2015
+—————————————————————————————————————————
+
+1.  Page 3, line 6 from bottom.  count should be counts.
+
+2.  Page 4, second sentence in the first paragraph in Section 1.2.3 should be changed to:
+
+It contains bibliographical information on every player and manager who have appeared at the Major League Baseball level and of all people who have been inducted in the Baseball Hall of Fame.
+
+3.  Page 8, second line in last paragraph should be changed to:
+
+Table 1.4 displays statistics from the data file \texttt{Pitching.csv} for the seasons where Ruth was a pitcher.
+
+4.  Page 13, first line in Section 1.2.8.  Change to
+
+The following questions can be answered with Lahman’s database.
+
+5.  Page 13, first Answer paragraph in Section 1.2.8.
+
+Replace “per games” to “per game” (two times).
+
+6.  Page 16, replace this paragraph:
+
+This table displays team statistics\footnote{Some of the less important statistics, such as Catcher Interference, have been omitted in Table \ref{tab:gamelog}} as well as the players' identities and fielding positions for the home team;  similar statistics and player information are  available for the visitor team.
+
+with this paragraph:
+
+This table displays team statistics\footnote{Some other team statistics, such as Stolen Bases and Caught Stealings, omitted in Table \ref{tab:gamelog}, are reported in Game log files.} as well as the players' identities and fielding positions for the home team;  similar statistics and player information are  available for the visitor team.
+
+7.  Page 30, Section 2.2, second paragraph.
+
+rstudio.org should be rstudio.com
+
+8.  Page 42, Section 2.5.2
+
+Change “features of R” to “feature of R”
+
+9.  Page 49, line 3.
+
+“ball in play” should be “balls in play”
+
+10.  Page 57, Exercises 3 title and 4 title and part (a).
+
+Change “350 Wins” to “350-Wins” (three times)
+
+11.  Page 60.  The code on this page should read
+
+hof <- read.csv("hofbatting.csv")
+hof$MidCareer <- with(hof, (From + To) / 2)
+hof$Era <- cut(hof$MidCareer,
+        breaks = c(1800, 1900, 1919, 1941, 1960, 1976, 1993, 2050),
+        labels = c("19th Century", "Dead Ball", "Lively Ball",
+                    "Integration", "Expansion", "Free Agency", 
+                    "Long Ball"))
+
+12.  Page 64, line 8.
+
+“dotplot” should be “dot plot”
+
+13.  Chapter 5
+
+In many places, “runs expectancy” should be replaced with “run expectancy”.  Similarly replace “runs value” with “run value” throughout this chapter.
+
+14.  Page 113, Figure 5.1.
+
+Replace “Dotplot” with “Stripchart”.
+
+15.  Page 134, Section 6.2.5, line 4
+
+Replace “group argument” with “groups argument”
+
+16.  Page 165, line 10.
+
+Replace “appearance of the line” with “appearance of the line,”
+
+17.  Page 187, Section 8.1, line 3.
+
+Replace “pitching statistics as from his MLB” to “pitching statistics from his MLB”
+
+18.  Page 195,last sentence.
+
+Replace “In addition, one adds the difference between the fielding position values of the two players.” with “In addition, one subtracts the absolute value of the difference between the fielding position values of the two players. “.
+
+19.  Page 302, Section A.1.4, line 3.
+
+Replace “field.csv” with “fields.csv”
+
+
